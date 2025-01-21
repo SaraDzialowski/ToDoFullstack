@@ -29,11 +29,11 @@ var app = builder.Build();
 app.UseCors();
 
 // הפעלת Swagger אם האפליקציה פועלת במצב פיתוח
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 // מיפוי של כל ה-routes
 
