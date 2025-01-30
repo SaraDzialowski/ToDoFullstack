@@ -38,10 +38,14 @@ app.UseCors();
 // מיפוי של כל ה-routes
 
 // שליפת כל המשימות
-app.MapGet("/tasks", async (ToDoDbContext dbContext) =>
+app.MapGet("/tasks", async (HttpContext httpContext) =>
 {
+    using var scope = httpContext.RequestServices.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
+
     return await dbContext.Items.ToListAsync();
 });
+
 
 // הוספת משימה חדשה
 app.MapPost("/tasks", async (ToDoDbContext dbContext, Item newItem) =>
