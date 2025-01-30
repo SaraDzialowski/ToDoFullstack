@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 // Set the default API URL
+ // rnd_4E7lSQ3UoC0nErIdeYaQcEcVTrVC
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 // Add an interceptor to log errors
