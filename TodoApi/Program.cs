@@ -3,41 +3,41 @@ using TodoApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// הוספת שירות ה-CORS
+// Add CORS services
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin() // מאפשר גישה מכל ה-Origins (Domains).
-              .AllowAnyMethod() // מאפשר את כל שיטות ה-HTTP (GET, POST, PUT, DELETE).
-              .AllowAnyHeader(); // מאפשר את כל ה-Headers.
+        policy.AllowAnyOrigin() // Allows access from any origin
+              .AllowAnyMethod() // Allows all HTTP methods (GET, POST, PUT, DELETE)
+              .AllowAnyHeader(); // Allows all headers
     });
 });
 
-// הוספת שירות ה-DbContext עם החיבור למסד נתונים MySQL
+// Add DbContext service with MySQL database connection
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"), 
     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ToDoDB"))));
 
-// הוספת שירות Swagger
+// Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// הפעלת CORS על כל ה-API
+// Enable CORS for the API
 app.UseCors();
 
-// הפעלת Swagger אם האפליקציה פועלת במצב פיתוח
-// if (app.Environment.IsDevelopment())
-// {
+// Enable Swagger if the application is in development
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-// }
+}
 
-// מיפוי של כל ה-routes
+// Mapping all routes
 
-// שליפת כל המשימות
+// Get all tasks
 app.MapGet("/tasks", async (HttpContext httpContext) =>
 {
     using var scope = httpContext.RequestServices.CreateScope();
@@ -46,19 +46,16 @@ app.MapGet("/tasks", async (HttpContext httpContext) =>
     try
     {
         var tasks = await dbContext.Items.ToListAsync();
-        return Results.Ok(tasks); // Return the tasks wrapped in Results.Ok
+        return Results.Ok(tasks);
     }
     catch (Exception ex)
     {
-        // Log the exception
         Console.Error.WriteLine(ex);
-        return Results.Problem("An error occurred while retrieving tasks."); // Return a problem result
+        return Results.Problem("An error occurred while retrieving tasks.");
     }
 });
 
-
-
-// הוספת משימה חדשה
+// Add a new task
 app.MapPost("/tasks", async (ToDoDbContext dbContext, Item newItem) =>
 {
     dbContext.Items.Add(newItem);
@@ -66,7 +63,7 @@ app.MapPost("/tasks", async (ToDoDbContext dbContext, Item newItem) =>
     return Results.Created($"/tasks/{newItem.Id}", newItem);
 });
 
-// עדכון משימה קיימת
+// Update an existing task
 app.MapPut("/tasks/{id}", async (ToDoDbContext dbContext, int id, Item updatedItem) =>
 {
     var item = await dbContext.Items.FindAsync(id);
@@ -78,7 +75,7 @@ app.MapPut("/tasks/{id}", async (ToDoDbContext dbContext, int id, Item updatedIt
     return Results.Ok(item);
 });
 
-// מחיקת משימה
+// Delete a task
 app.MapDelete("/tasks/{id}", async (ToDoDbContext dbContext, int id) =>
 {
     var item = await dbContext.Items.FindAsync(id);
@@ -88,7 +85,7 @@ app.MapDelete("/tasks/{id}", async (ToDoDbContext dbContext, int id) =>
     await dbContext.SaveChangesAsync();
     return Results.NoContent();
 });
-app.MapGet("/",()=>"ToDoApi is running");
+
+app.MapGet("/", () => "ToDoApi is running");
 
 app.Run();
-
