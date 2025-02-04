@@ -6,12 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowAnyOrigin() // Allows access from any origin
-              .AllowAnyMethod() // Allows all HTTP methods (GET, POST, PUT, DELETE)
-              .AllowAnyHeader(); // Allows all headers
-    });
+   options.AddDefaultPolicy(policy =>
+{
+    policy.WithOrigins("https://todofullstack-llb5.onrender.com") // Specify your allowed origin
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+});
+
 });
 
 // Add DbContext service with MySQL database connection
