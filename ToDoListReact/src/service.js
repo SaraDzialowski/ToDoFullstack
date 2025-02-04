@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 // Set the default API URL
- // rnd_4E7lSQ3UoC0nErIdeYaQcEcVTrVC
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 // Add an interceptor to log errors
@@ -13,7 +12,8 @@ axios.interceptors.response.use(
   }
 );
 
-export default {
+// Assign the API methods to a variable
+const api = {
   getTasks: async () => {
     const result = await axios.get('/tasks');    
     return result.data;
@@ -33,3 +33,6 @@ export default {
     await axios.delete(`/tasks/${id}`);
   }
 };
+
+// Export the api object as the default export
+export default api;
