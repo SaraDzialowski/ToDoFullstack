@@ -43,8 +43,19 @@ app.MapGet("/tasks", async (HttpContext httpContext) =>
     using var scope = httpContext.RequestServices.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ToDoDbContext>();
 
-    return await dbContext.Items.ToListAsync();
+    try
+    {
+        var tasks = await dbContext.Items.ToListAsync();
+        return Results.Ok(tasks); // Return the tasks wrapped in Results.Ok
+    }
+    catch (Exception ex)
+    {
+        // Log the exception
+        Console.Error.WriteLine(ex);
+        return Results.Problem("An error occurred while retrieving tasks."); // Return a problem result
+    }
 });
+
 
 
 // הוספת משימה חדשה
