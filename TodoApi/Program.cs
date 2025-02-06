@@ -12,7 +12,6 @@ builder.Services.AddCors(options =>
           .AllowAnyMethod()
           .AllowAnyHeader();
 });
-
 });
 
 // Add DbContext service with MySQL database connection
